@@ -130,3 +130,24 @@ int main() {
 	return 0;
 }
 ```
+
+# Python binding
+
+Python binding (maintained separately at [kenshi84/bspot-python](https://github.com/kenshi84/bspot-python)) can be installed via `pip`:
+
+```bash
+pip install bspot
+```
+
+Example usage:
+
+```python
+>>> import bspot
+>>> import numpy as np
+>>> A = np.random.randn(3,10000)
+>>> B = np.random.randn(3,10000)
+>>> bspot.set_num_threads(8)        # By default, use all available threads
+>>> bspot.compute_matching(A, B, orthogonal=True)
+array([1586, 7207,  330, ..., 3329, 4056, 3637],
+      shape=(10000,), dtype=int32)
+```
