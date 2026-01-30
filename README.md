@@ -149,7 +149,7 @@ Example usage:
 >>> A = np.random.randn(3,10000)
 >>> B = np.random.randn(3,10000)
 >>> bspot.set_num_threads(8)        # By default, use all available threads
->>> bspot.compute_matching(A, B, orthogonal=True)
+>>> bspot.compute_matching(A, B, gaussian=True)
 array([1586, 7207,  330, ..., 3329, 4056, 3637],
       shape=(10000,), dtype=int32)
 ```
