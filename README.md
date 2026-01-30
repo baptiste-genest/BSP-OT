@@ -1,6 +1,8 @@
 ## Official source code of the "BSP-OT: Sparse transport plans between discrete measures in loglinear time" paper (SIGGRAPH Asia 2025). 
 Baptiste Genest, Nicolas Bonneel, Vincent Nivoliers, David Coeurjolly.
 
+Python binding : [kenshi84/bspot-python](https://github.com/kenshi84/bspot-python)
+
 [![CMake on multiple platforms](https://github.com/baptiste-genest/BSP-OT/actions/workflows/cmake-multi-platform.yml/badge.svg)](https://github.com/baptiste-genest/BSP-OT/actions/workflows/cmake-multi-platform.yml) 
 
 [![](https://www.replicabilitystamp.org/logo/Reproducibility-small.png)](http://www.replicabilitystamp.org#https-github-com-baptiste-genest-bsp-ot) 
