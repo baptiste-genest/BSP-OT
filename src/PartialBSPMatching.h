@@ -44,7 +44,7 @@ protected:
             if (idmin >= idmax)
                 break;
             if (idmin < idmax)
-                std::swap(atoms[idmin],atoms[idmax]);
+                { std::swap(atoms[idmin],atoms[idmax]); if (atoms[idmin].dot == atoms[idmax].dot) idmin++; }
         }
         return idmin;
     }
