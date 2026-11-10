@@ -1,7 +1,15 @@
 ## Official source code of the "BSP-OT: Sparse transport plans between discrete measures in loglinear time" paper (SIGGRAPH Asia 2025). 
 Baptiste Genest, Nicolas Bonneel, Vincent Nivoliers, David Coeurjolly.
 
-[![CMake on multiple platforms](https://github.com/baptiste-genest/BSP-OT/actions/workflows/cmake-multi-platform.yml/badge.svg)](https://github.com/baptiste-genest/BSP-OT/actions/workflows/cmake-multi-platform.yml)
+Standalone python binding and package : [kenshi84/bspot-python](https://github.com/kenshi84/bspot-python)
+
+Python Optimal Transport binding : https://pythonot.github.io/master/auto_examples/plot_bsp_ot.html
+
+CUDA version ***(10x speedup!!)*** : [baptiste-genest/BSP-OT-CUDA](https://github.com/baptiste-genest/BSP-OT-CUDA)
+
+[![CMake on multiple platforms](https://github.com/baptiste-genest/BSP-OT/actions/workflows/cmake-multi-platform.yml/badge.svg)](https://github.com/baptiste-genest/BSP-OT/actions/workflows/cmake-multi-platform.yml) 
+
+[![](https://www.replicabilitystamp.org/logo/Reproducibility-small.png)](http://www.replicabilitystamp.org#https-github-com-baptiste-genest-bsp-ot) 
 
 ![teaser](https://github.com/baptiste-genest/BSP-OT/blob/main/teaser.jpg)
 
@@ -127,4 +135,25 @@ int main() {
 
 	return 0;
 }
+```
+
+# Python binding
+
+Python binding (maintained separately at [kenshi84/bspot-python](https://github.com/kenshi84/bspot-python)) can be installed via `pip`:
+
+```bash
+pip install bspot
+```
+
+Example usage:
+
+```python
+>>> import bspot
+>>> import numpy as np
+>>> A = np.random.randn(3,10000)
+>>> B = np.random.randn(3,10000)
+>>> bspot.set_num_threads(8)        # By default, use all available threads
+>>> bspot.compute_matching(A, B, gaussian=True)
+array([1586, 7207,  330, ..., 3329, 4056, 3637],
+      shape=(10000,), dtype=int32)
 ```

@@ -25,6 +25,8 @@ using namespace BSPOT;
 
 using Pts = Points<static_dim>;
 
+scalar exact_W2 = -1;
+
 scalar eval(const Pts& A,const Pts& B,const ints& T) {
     return std::sqrt((A - B(Eigen::all,T)).squaredNorm());///A.cols();
 }
@@ -50,20 +52,21 @@ struct SimpleMatching {
         if (PA.cols() != PB.cols()){
             spdlog::error("diagrams should have the same size");
         }
+        auto cost = makeCost(PA,NA,PB,NB);
         scalar c = 0;
-        for (auto i : range(PA.cols())){
-            if (i >= NA && T[i] >= NB)
-                continue;
-            c+= (PA.col(i) - PB.col(T[i])).squaredNorm();
-        }
+        for (auto i : range(PA.cols()))
+            c += cost(i,T[i]);
         return std::sqrt(c);
     }
 
     cost_function makeCost(const Pts& PA,int NA,const Pts& PB,int NB) {
-        return [this,NA,NB,&PA,&PB] (int i,int j) -> scalar {
+        return [NA,NB,&PA,&PB] (int i,int j) -> scalar {
             if (i >= NA && j >= NB)
                 return 0.;
-            return (PA.col(i) - PB.col(j)).squaredNorm();
+            if (i < NA && j < NB)
+                return (PA.col(i) - PB.col(j)).squaredNorm();
+            scalar p = (i < NA) ? PA(1,i) - PA(0,i) : PB(1,j) - PB(0,j);
+            return p*p/2;
         };
     }
 
@@ -119,21 +122,23 @@ struct SimpleMatching {
         untangle(T,NA,NB);
 
         spdlog::info("matching cost {}, time {}",W2(PA,NA,PB,NB,T),time_bspot);
-        auto rk = rankPlans(plans,c);
-        scalar ex = 0.98121088678005;
 
         // COMPUTE REL ERROR EVOLUTION
-        {
-            BijectiveMatching T;
-            for (auto i : range(plans.size())) {
-                T = Merge(T,plans[rk[i]],c);
-                rslt[i] += (W2(PA,NA,PB,NB,T) - ex)/ex;
-            }
+        if (exact_W2 > 0) {
+            scalar ex = exact_W2;
+            auto rk = rankPlans(plans,c);
+            {
+                BijectiveMatching T;
+                for (auto i : range(plans.size())) {
+                    T = Merge(T,plans[rk[i]],c);
+                    rslt[i] += (W2(PA,NA,PB,NB,T) - ex)/ex;
+                }
 
-            std::ofstream file("/tmp/eval_cost_persistance_diagram.data");
-            file << rslt << std::endl;
+                std::ofstream file("/tmp/eval_cost_persistance_diagram.data");
+                file << rslt << std::endl;
+            }
+            spdlog::info("rel error {}",(W2(PA,NA,PB,NB,T)-ex)/ex);
         }
-        spdlog::info("rel error {}",(W2(PA,NA,PB,NB,T)-ex)/ex);
 
         return T;
     }
@@ -159,6 +164,7 @@ int main(int argc,char** argv) {
     app.add_option("--diag_2", nu_src, "second diagram")->required();
 
     app.add_option("--nb_plans", nb_plans, "Number of plans per matching");
+    app.add_option("--exact", exact_W2, "Exact W2 of this pair, enables the relative error report");
 
     bool viz = false;
     app.add_flag("--viz", viz, "use polyscope");
